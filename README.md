@@ -1,6 +1,6 @@
 # RMOBI Analysis
 
-This repository contains scripts used for statistical analyis and figure generation of the RMOBI manuscript.
+This repository contains scripts used for statistical analyses and figure generation of the RMOBI manuscript.
 
 The related [RMOBI interactive visualization resource](https://slizovskiylab.github.io/RMOBI/) provides network exploration. This repository contains the downstream analysis workflows and input exports, rather than the web application or its companion C++ engine.
 
