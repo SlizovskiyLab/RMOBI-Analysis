@@ -168,3 +168,42 @@ The full model and every leave-one-study-out iteration use
 `cbind(n_Em, n_Dis) ~ cohort + log(k_post) + (1 | study)` without sequencing depth. Outputs
 include cohort ORs, 95% CIs, p-values, study SD, dispersion, convergence diagnostics, and a
 single-panel LOSO coefficient forest plot.
+
+# Colocalization-profile study effects
+
+```bash
+python3 statistical_testing/colocalization_profile_study_effects.py
+```
+
+Tests whether patient colocalization profiles differ between studies within each
+disease cohort. After filtering the SNP conrfimed genes, it builds a binary patient-by-feature matrix
+of MEGARes group–MGE gene pairs observed in donor, pre-FMT, or any post-FMT sample. Jaccard
+distances are analyzed using PERMANOVA with 9,999 label permutations. A companion permutation
+test compares distances to study centroids on the positive PCoA axes to assess within-study
+dispersion. Both tests use a fixed random seed (`20260803`).
+
+Outputs include the binary matrix, patient metadata, PERMANOVA pseudo-F, R² and p-values,
+dispersion statistics, a Markdown interpretation summary, and cohort-specific PCoA plots. The ordination also reports the negative-eigenvalue fraction. Results are saved under `output/colocalization_profile_study_effects/`.
+
+
+# Random-effects meta-analysis
+
+```bash
+python3 statistical_testing/random_effects_meta_analysis.py
+```
+
+This analysis summarizes emergence/disappearance balance across studies within each disease
+cohort. Using the shared transition definitions, it calculates each patient's
+`log((n_emerge + 0.5) / (n_disappear + 0.5))`, then each study's mean log-ratio and standard
+error. Positive values indicate more emergence than disappearance; negative values indicate
+the reverse. Study means are pooled using inverse-variance random-effects weights, with
+between-study variance (`tau²`) estimated by REML and a DerSimonian–Laird fallback if
+optimization fails. Pooled 95% CIs use a modified Hartung–Knapp adjustment with its variance
+scale bounded below by one and a t distribution with `k - 1` degrees of freedom. Pooling
+requires at least two studies with finite, positive within-study variances.
+
+Outputs include patient log-ratios, study-specific estimates and normal-approximation 95% CIs,
+pooled estimates and adjusted 95% CIs, heterogeneity statistics (`tau²`, `I²`, Cochran's Q and
+its p-value), a Markdown summary, and a study-specific/pooled forest plot.
+Results are saved under `output/random_effects_meta_analysis/`.
+
